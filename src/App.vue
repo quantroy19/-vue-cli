@@ -1,10 +1,19 @@
 <template>
   <section>
+    <to-do :to-do="items">
+      <template v-slot:todo="{todoItem}">
+        <li class="bg-yl" v-if="!todoItem.checked">
+          <h4>{{todoItem.name}}</h4>
+        </li>
+      </template>
+    </to-do>
     <header>
+      <button @click="setSelectedComponent('to-do')">Completed tasks</button> &nbsp;
+      <button @click="setSelectedComponent('to-do-list')">Todo tasks</button>
       <add-todo @add-todo="addTodo"></add-todo>
       <div class="list">
         <ul>
-          <to-do-list
+          <!-- <to-do-list
             v-for="item in items"
             :key="item.id"
             :id="item.id"
@@ -12,17 +21,54 @@
             :checked="item.checked"
             @delete="deleteTodo"
             @update="updateTodo"
-          ></to-do-list>
+          ></to-do-list>-->
+          <div v-if="selectedComponent=='to-do-list'">
+            <component
+              :is="selectedComponent"
+              :to-do="items"
+              v-for="item in items"
+              :key="item.id"
+              :id="item.id"
+              :name="item.name"
+              :checked="item.checked"
+              @delete="deleteTodo"
+              @update="updateTodo"
+              @checkDoneTodo="checkDone"
+            ></component>
+          </div>
+          <div v-else>
+            <component :is="selectedComponent" :to-do="items">
+              <template v-slot:todo="{todoItem}">
+                <li class="bg-yl" v-if="todoItem.checked">
+                  <h1>{{todoItem.name}}</h1>
+                </li>
+              </template>
+            </component>
+          </div>
         </ul>
       </div>
     </header>
+    <to-do :to-do="items">
+      <template v-slot:todo="{todoItem}">
+        <li class="bg-green" v-if="todoItem.checked">
+          <h1>{{todoItem.name}}</h1>
+        </li>
+      </template>
+    </to-do>
   </section>
 </template>
 
 <script>
+import ToDo from "./components/ToDo.vue";
+
 export default {
+  components: {
+    ToDo
+  },
+
   data() {
     return {
+      selectedComponent: "to-do-list",
       items: [
         {
           id: 1,
@@ -31,11 +77,18 @@ export default {
         },
         {
           id: 2,
-          name: "sql"
+          name: "sql",
+          checked: true
+        },
+        {
+          id: 3,
+          name: "sql22",
+          checked: false
         }
       ]
     };
   },
+
   methods: {
     addTodo(name) {
       if (name.length === 0) {
@@ -55,6 +108,16 @@ export default {
     updateTodo(data) {
       const index = this.items.findIndex(item => item.id == data.id);
       this.items[index].name = data.name;
+    },
+    checkDone(id) {
+      const index = this.items.findIndex(item => item.id == id);
+      // console.log(index);
+      // console.log(this.items[index].checked);
+      this.items[index].checked = !this.items[index].checked;
+    },
+
+    setSelectedComponent(component) {
+      this.selectedComponent = component;
     }
   }
 };
@@ -80,8 +143,8 @@ header {
   background-color: #fff;
   color: white;
   text-align: center;
-  width: 90%;
-  max-width: 40rem;
+  width: 70%;
+  max-width: 35rem;
 }
 
 #app .head {
@@ -155,8 +218,8 @@ header {
 }
 
 #app h4 {
-  text-align: left;
-  margin-left: 125px;
+  /* text-align: left;
+  margin-left: 125px; */
 }
 
 #app .add-new p {
@@ -207,7 +270,11 @@ header {
 }
 
 #app .list .btn-edit {
-  margin-left: 340px;
+  margin-left: 240px;
+  position: relative;
+}
+.btn-edit {
+  margin-left: 50px;
   position: relative;
 }
 
@@ -262,5 +329,19 @@ header {
 }
 #app form div {
   margin: 1rem 0;
+}
+section {
+  display: flex;
+  justify-content: space-around;
+}
+
+.bg-yl {
+  background-color: yellow;
+}
+.bg-green {
+  background-color: greenyellow;
+}
+h1 {
+  font-size: 2em;
 }
 </style>

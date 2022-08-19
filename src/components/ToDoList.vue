@@ -6,7 +6,12 @@
         <button class="btn btn-update">Update</button>
       </form>
       <span v-else>
-        <input type="checkbox" v-model="checkDone" :value="checkDone" @click="checkDoneTodo" />
+        <input
+          type="checkbox"
+          v-model="checkDone"
+          :value="checkDone"
+          @click="$emit('checkDoneTodo', id)"
+        />
         <p>{{ name }}</p>
         <button @click="editTodo" class="btn btn-edit">Edit</button>
         <button @click="$emit('delete', id)" class="btn btn-delete">Remove</button>
