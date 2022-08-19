@@ -39,7 +39,7 @@
           <div v-else>
             <component :is="selectedComponent" :to-do="items">
               <template v-slot:todo="{todoItem}">
-                <li class="bg-yl" v-if="todoItem.checked">
+                <li class="bg-green" v-if="todoItem.checked">
                   <h1>{{todoItem.name}}</h1>
                 </li>
               </template>
